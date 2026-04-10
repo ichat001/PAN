@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>干货分享家 - 网盘</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* 您原有的样式 ———— 完全保留，未作任何改动 */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .iframe-container {
+      width: 100%;
+      height: 100%;
+      transform-origin: top left;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ---------- 以下是新增的极简密码浮层样式，不影响原有布局 ---------- */
+    #pwd-layer {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      font-family: system-ui, sans-serif;
+    }
+    #pwd-box {
+      background: white;
+      padding: 24px 30px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      min-width: 260px;
+    }
+    #pwd-box h3 {
+      margin: 0 0 16px 0;
+      color: #333;
+      font-weight: 500;
+      font-size: 18px;
+    }
+    #pwd-box input {
+      padding: 10px 12px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 15px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    #pwd-box input:focus {
+      border-color: #2d7aff;
+    }
+    #pwd-box button {
+      padding: 10px 28px;
+      background: #2d7aff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #1a5cd4;
+    }
+    #pwd-box button:hover {
+      background: #1a5cd4;
+    }
+    #pwd-error {
+      color: #d32;
+      font-size: 13px;
+      min-height: 20px;
+      margin-top: 8px;
+    }
+    /* 隐藏浮层 */
+    #pwd-layer.hide {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 您原有的 iframe 容器 ———— 保持原样 -->
+<div class="iframe-container">
+  <iframe id="main-iframe" src="about:blank" allowfullscreen allow="fullscreen"></iframe>
+</div>
+
+<!-- 极简密码浮层 (只加了这一个结构) -->
+<div id="pwd-layer">
+  <div id="pwd-box">
+    <h3>🔐 访问密码</h3>
+    <input type="password" id="password-input" placeholder="请输入密码" autofocus>
+    <br>
+    <button id="unlock-btn">进入网盘</button>
+    <div id="pwd-error"></div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ★ 在这里修改你的密码 (默认 ganhuo2024)
+    const PASSWORD = "ganhuo2024";
+    const TARGET_URL = "https://dvbb15pab2-5244.cnb.run";
+
+    const layer = document.getElementById('pwd-layer');
+    const input = document.getElementById('password-input');
+    const btn = document.getElementById('unlock-btn');
+    const errorDiv = document.getElementById('pwd-error');
+    const iframe = document.getElementById('main-iframe');
+
+    function unlock() {
+      const val = input.value.trim();
+      if (val === '') {
+        errorDiv.textContent = '请输入密码';
+        return;
+      }
+      if (val !== PASSWORD) {
+        errorDiv.textContent = '密码错误';
+        input.value = '';
+        input.focus();
+        return;
+      }
+      // 密码正确：加载真实地址，隐藏浮层
+      iframe.src = TARGET_URL;
+      layer.classList.add('hide');
+    }
+
+    btn.addEventListener('click', unlock);
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        unlock();
+      }
+    });
+    // 输入时清除错误提示
+    input.addEventListener('input', () => { errorDiv.textContent = ''; });
+
+    // 点击浮层背景不关闭，但让输入框获得焦点更顺手
+    layer.addEventListener('click', (e) => {
+      if (e.target === layer) input.focus();
+    });
+  })();
+</script>
+
+</body>
+</html>

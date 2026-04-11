@@ -1,0 +1,19 @@
+name: CNB Scheduled Trigger
+
+on:
+  schedule:
+    # 每8小时运行一次 (UTC时间: 0点, 8点, 16点)
+    - cron: '0 */8 * * *'
+  workflow_dispatch:  # 允许手动测试
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send POST request to CNB
+        run: |
+          curl -X POST \
+            -H "Authorization: ${{ secrets.CNB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"branch":"main","ref":""}' \
+            "https://api.cnb.cool/${{ secrets.CNB_REPO }}/-/workspace/start"
